@@ -1,0 +1,1452 @@
+
+Library version:	2.1.0
+Library scope:	GLOBAL
+Introduction
+AppiumLibrary is a Mobile App testing library for Robot Framework.
+
+Locating or specifying elements
+All keywords in AppiumLibrary that need to find an element on the page take an argument, either a locator or a webelement. locator is a string that describes how to locate an element using a syntax specifying different location strategies. webelement is a variable that holds a WebElement instance, which is a representation of the element.
+
+Using locators
+By default, when a locator is provided, it is matched against the key attributes of the particular element type. For iOS and Android, key attribute is id for all elements and locating elements is easy using just the id. For example:
+
+Click Element    id=my_element
+New in AppiumLibrary 1.4, id and xpath are not required to be specified, however xpath should start with // else just use xpath locator as explained below.
+
+For example:
+
+Click Element    my_element
+Wait Until Page Contains Element    //*[@type="android.widget.EditText"]
+Appium additionally supports some of the Mobile JSON Wire Protocol locator strategies. It is also possible to specify the approach AppiumLibrary should take to find an element by specifying a lookup strategy with a locator prefix. Supported strategies are:
+
+Strategy	Example	Description	Note
+identifier	Click Element | identifier=my_element	Matches by @id attribute	
+id	Click Element | id=my_element	Matches by @resource-id attribute	
+accessibility_id	Click Element | accessibility_id=button3	Accessibility options utilize.	
+xpath	Click Element | xpath=//UIATableView/UIATableCell/UIAButton	Matches with arbitrary XPath	
+class	Click Element | class=UIAPickerWheel	Matches by class	
+android	Click Element | android=UiSelector().description('Apps')	Matches by Android UI Automator	
+ios	Click Element | ios=.buttons().withName('Apps')	Matches by iOS UI Automation	
+predicate	Click Element | predicate=name=="login"	Matches by iOS Predicate	Check PR: #196
+chain	Click Element | chain=XCUIElementTypeWindow[1]/*	Matches by iOS Class Chain	
+css	Click Element | css=.green_button	Matches by css in webview	
+name	Click Element | name=my_element	Matches by @name attribute	Only valid for Selendroid
+Using webelements
+Starting with version 1.4 of the AppiumLibrary, one can pass an argument that contains a WebElement instead of a string locator. To get a WebElement, use the new Get WebElements or Get WebElement keyword.
+
+For example:
+
+@{elements}    Get Webelements    class=UIAButton
+Click Element    @{elements}[2]
+Importing
+Arguments
+timeout
+=
+5
+run_on_failure
+=
+Capture Page Screenshot
+sleep_between_wait_loop
+=
+0.2
+Documentation
+AppiumLibrary can be imported with optional arguments.
+
+timeout is the default timeout used to wait for all waiting actions. It can be later set with Set Appium Timeout.
+
+run_on_failure specifies the name of a keyword (from any available libraries) to execute when a AppiumLibrary keyword fails.
+
+By default Capture Page Screenshot will be used to take a screenshot of the current page. Using the value No Operation will disable this feature altogether. See Register Keyword To Run On Failure keyword for more information about this functionality.
+
+sleep_between_wait_loop is the default sleep used to wait between loop in all wait until keywords
+
+Examples:
+
+Library	AppiumLibrary	10	# Sets default timeout to 10 seconds	
+Library	AppiumLibrary	timeout=10	run_on_failure=No Operation	# Sets default timeout to 10 seconds and does nothing on failure
+Library	AppiumLibrary	timeout=10	sleep_between_wait_loop=0.3	# Sets default timeout to 10 seconds and sleep 300 ms between wait loop
+Keywords
+Activate Application
+Arguments
+app_id
+Documentation
+Activates the application if it is not running or is running in the background. Args:
+
+app_id - BundleId for iOS. Package name for Android.
+New in AppiumLibrary v2
+
+Background App
+Arguments
+seconds
+=
+5
+Documentation
+DEPRECATED!! use Background Application instead. Puts the application in the background on the device for a certain duration.
+
+Background Application
+Arguments
+seconds
+=
+5
+Documentation
+Puts the application in the background on the device for a certain duration.
+
+Capture Page Screenshot
+Arguments
+filename
+=
+None
+Documentation
+Takes a screenshot of the current page and embeds it into the log.
+
+filename argument specifies the name of the file to write the screenshot into. If no filename is given, the screenshot will be embedded as Base64 image to the log.html. In this case no file is created in the filesystem.
+
+Warning: this behavior is new in 1.7. Previously if no filename was given the screenshots where stored as separate files named appium-screenshot-<counter>.png
+
+Clear Text
+Arguments
+locator
+Documentation
+Clears the text field identified by locator.
+
+See introduction for details about locating elements.
+
+Click A Point
+Arguments
+x
+=
+0
+y
+=
+0
+duration
+=
+100
+Documentation
+DEPRECATED!! Since selenium v4, use other keywords.
+
+Click on a point
+
+Click Alert Button
+Arguments
+button_name
+Documentation
+Clicks on Alert button identified by Name.iOS only.
+
+Args:
+
+button_name - Text on the iOS alert button.
+Example:
+
+Click Alert Button	Allow
+New in AppiumLibrary v2
+
+Click Button
+Arguments
+index_or_name
+Documentation
+DEPRECATED!! in selenium v4, use Click Element keyword. Click button
+
+Click Element
+Arguments
+locator
+Documentation
+Click element identified by locator.
+
+Key attributes for arbitrary elements are index and name. See introduction for details about locating elements.
+
+Click Element At Coordinates
+Arguments
+coordinate_X
+coordinate_Y
+Documentation
+DEPRECATED!! Since selenium v4, use other keywords.
+
+click element at a certain coordinate
+
+Click Text
+Arguments
+text
+exact_match
+=
+False
+Documentation
+Click text identified by text.
+
+By default tries to click first text involves given text, if you would like to click exactly matching text, then set exact_match to True.
+
+If there are multiple use of text and you do not want first one, use locator with Get Web Elements instead.
+
+Close All Applications
+Documentation
+Closes all open applications.
+
+This keyword is meant to be used in test or suite teardown to make sure all the applications are closed before the test execution finishes.
+
+After this keyword, the application indices returned by Open Application are reset and start from 1.
+
+Close Application
+Documentation
+Closes the current application and also close webdriver session.
+
+Delete File
+Arguments
+path
+timeout
+=
+5000
+include_stderr
+=
+True
+Documentation
+Delete the file specified as path.
+
+Android only.
+
+path - the path on the device
+timeout - delete command timeout
+includeStderr - whether exception will be thrown if the command's return code is not zero
+Drag And Drop
+Arguments
+locator
+str
+target
+str
+Documentation
+Drags the element identified by locator into the target element.
+
+The locator argument is the locator of the dragged element and the target is the locator of the target. See the Locating elements section for details about the locator syntax.
+
+Args:
+
+origin - the element to drag
+destination - the element to drag to
+Usage:
+
+Drag And Drop	id=div#element	id=div.target
+Element Attribute Should Match
+Arguments
+locator
+attr_name
+match_pattern
+regexp
+=
+False
+Documentation
+Verify that an attribute of an element matches the expected criteria.
+
+The element is identified by locator. See introduction for details about locating elements. If more than one element matches, the first element is selected.
+
+The attr_name is the name of the attribute within the selected element.
+
+The match_pattern is used for the matching, if the match_pattern is
+
+boolean or 'True'/'true'/'False'/'false' String then a boolean match is applied
+any other string is cause a string match
+The regexp defines whether the string match is done using regular expressions (i.e. BuiltIn Library's Should Match Regexp or string pattern match (i.e. BuiltIn Library's Should Match)
+
+Examples:
+
+Element Attribute Should Match	xpath = //*[contains(@text,'foo')]	text	*foobar	
+Element Attribute Should Match	xpath = //*[contains(@text,'foo')]	text	f.*ar	regexp = True
+Element Attribute Should Match	xpath = //*[contains(@text,'foo')]	enabled	True	
+1. is a string pattern match i.e. the 'text' attribute should end with the string 'foobar'
+2. is a regular expression match i.e. the regexp 'f.*ar' should be within the 'text' attribute
+3. is a boolead match i.e. the 'enabled' attribute should be True
+NOTE: On Android the supported attribute names can be found in the uiautomator2 driver readme: [https://github.com/appium/appium-uiautomator2-driver?tab=readme-ov-file#element-attributes]
+
+NOTE: Some attributes can be evaluated in two different ways e.g. these evaluate the same thing:
+
+Element Attribute Should Match	xpath = //*[contains(@text,'example text')]	name	txt_field_name
+Element Name Should Be	xpath = //*[contains(@text,'example text')]	txt_field_name	
+Element Name Should Be
+Arguments
+locator
+expected
+Element Should Be Disabled
+Arguments
+locator
+loglevel
+=
+INFO
+Documentation
+Verifies that element identified with locator is disabled.
+
+Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+
+Element Should Be Enabled
+Arguments
+locator
+loglevel
+=
+INFO
+Documentation
+Verifies that element identified with locator is enabled.
+
+Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+
+Element Should Be Visible
+Arguments
+locator
+loglevel
+=
+INFO
+Documentation
+Verifies that element identified with locator is visible.
+
+Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+
+New in AppiumLibrary 1.4.5
+
+Element Should Contain Text
+Arguments
+locator
+expected
+message
+=
+Documentation
+Verifies element identified by locator contains text expected.
+
+If you wish to assert an exact (not a substring) match on the text of the element, use Element Text Should Be.
+
+Key attributes for arbitrary elements are id and xpath. message can be used to override the default error message.
+
+New in AppiumLibrary 1.4.
+
+Element Should Not Contain Text
+Arguments
+locator
+expected
+message
+=
+Documentation
+Verifies element identified by locator does not contain text expected.
+
+message can be used to override the default error message. See Element Should Contain Text for more details.
+
+Element Text Should Be
+Arguments
+locator
+expected
+message
+=
+Documentation
+Verifies element identified by locator exactly contains text expected.
+
+In contrast to Element Should Contain Text, this keyword does not try a substring match but an exact match on the element identified by locator.
+
+message can be used to override the default error message.
+
+New in AppiumLibrary 1.4.
+
+Element Value Should Be
+Arguments
+locator
+expected
+Execute Adb Shell
+Arguments
+command
+* args
+Documentation
+Execute ADB shell commands
+
+Android only.
+
+command - The ABD shell command
+args - Arguments to send to command
+Returns the exit code of ADB shell.
+
+Requires server flag --relaxed-security to be set on Appium server.
+
+Execute Adb Shell Timeout
+Arguments
+command
+timeout
+* args
+Documentation
+Execute ADB shell commands
+
+Android only.
+
+command - The ABD shell command
+timeout - Timeout to be applied to command
+args - Arguments to send to command
+Returns the exit code of ADB shell.
+
+Requires server flag --relaxed-security to be set on Appium server.
+
+Execute Async Script
+Arguments
+script
+** kwargs
+Documentation
+Inject a snippet of Async-JavaScript into the page for execution in the context of the currently selected frame (Web context only).
+
+The executed script is assumed to be asynchronous and must signal that is done by invoking the provided callback, which is always provided as the final argument to the function.
+
+The value to this callback will be returned to the client.
+
+Check Execute Script for example kwargs usage
+
+Updated in AppiumLibrary 2
+
+Execute Script
+Arguments
+script
+** kwargs
+Documentation
+Execute a variety of native, mobile commands that aren't associated with a specific endpoint. See Appium Mobile Command for more details.
+
+Example:
+
+&{scrollGesture}	create dictionary	left=${50}	top=${150}	width=${50}	height=${200}	direction=down	percent=${100}
+Sleep	1						
+Execute Script	mobile: scrollGesture	&{scrollGesture}					
+Updated in AppiumLibrary 2
+
+Flick
+Arguments
+start_x
+int
+start_y
+int
+end_x
+int
+end_y
+int
+Documentation
+Flick from one point to another point.
+
+Args:
+
+start_x - x-coordinate at which to start
+start_y - y-coordinate at which to start
+end_x - x-coordinate at which to stop
+end_y - y-coordinate at which to stop
+Usage:
+
+Flick	100	100	100	400	# Flicks the screen up.
+Get Activity
+Documentation
+Retrieves the current activity on the device.
+
+Android only.
+
+Get Appium SessionId
+Documentation
+Returns the current session ID as a reference
+
+Get Appium Timeout
+Documentation
+Gets the timeout in seconds that is used by various keywords.
+
+See Set Appium Timeout for an explanation.
+
+Get Capability
+Arguments
+capability_name
+Documentation
+Return the desired capability value by desired capability name
+
+Get Contexts
+Documentation
+Get available contexts.
+
+Get Current Context
+Documentation
+Get current context.
+
+Get Element Attribute
+Arguments
+locator
+attribute
+Documentation
+Get element attribute using given attribute: name, value,...
+
+Examples:
+
+Get Element Attribute	locator	name
+Get Element Attribute	locator	value
+Get Element Location
+Arguments
+locator
+Documentation
+Get element location
+
+Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+
+Get Element Rect
+Arguments
+locator
+Documentation
+Gets dimensions and coordinates of an element
+
+Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+
+Get Element Size
+Arguments
+locator
+Documentation
+Get element size
+
+Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+
+Get Matching Xpath Count
+Arguments
+xpath
+Documentation
+Returns number of elements matching xpath
+
+One should not use the xpath= prefix for 'xpath'. XPath is assumed.
+
+Correct:		
+${count}	Get Matching Xpath Count	//android.view.View[@text='Test']
+Incorrect:		
+${count}	Get Matching Xpath Count	xpath=//android.view.View[@text='Test']
+If you wish to assert the number of matching elements, use Xpath Should Match X Times.
+
+New in AppiumLibrary 1.4.
+
+Get Network Connection Status
+Documentation
+Returns an integer bitmask specifying the network connection type.
+
+Android only.
+
+See set network connection status for more details.
+
+Get Sleep Between Wait Loop
+Documentation
+Gets the sleep between wait loop in seconds that is used by wait until keywords.
+
+Get Source
+Documentation
+Returns the entire source of the current page.
+
+Get Text
+Arguments
+locator
+first_only
+=
+True
+bool
+Documentation
+Get element text (for hybrid and mobile browser use xpath locator, others might cause problem)
+
+first_only parameter allow to get the text from the 1st match (Default) or a list of text from all match.
+
+Example:
+
+${text}	Get Text	//*[contains(@text,'foo')]	
+@{text}	Get Text	//*[contains(@text,'foo')]	${False}
+New in AppiumLibrary 1.4.
+
+Get Webelement
+Arguments
+locator
+Documentation
+Returns the first WebElement object matching locator.
+
+Example:
+
+${element}	Get Webelement	id=my_element
+Click Element	${element}	
+New in AppiumLibrary 1.4.
+
+Get Webelement In Webelement
+Arguments
+element
+locator
+Documentation
+Returns a single WebElement objects matching locator that is a child of argument element.
+
+This is useful when your HTML doesn't properly have id or name elements on all elements. So the user can find an element with a tag and then search that elmements children.
+
+Get Webelements
+Arguments
+locator
+Documentation
+Returns list of WebElement objects matching locator.
+
+Example:
+
+@{elements}	Get Webelements	id=my_element
+Click Element	@{elements}[2]	
+This keyword was changed in AppiumLibrary 1.4 in following ways:
+
+Name is changed from Get Elements to current one.
+Deprecated argument fail_on_error, use Run Keyword and Ignore Error if necessary.
+New in AppiumLibrary 1.4.
+
+Get Window Height
+Documentation
+Get current device height.
+
+Example:
+
+${width}	Get Window Width	
+${height}	Get Window Height	
+Click A Point	${width}	${height}
+New in AppiumLibrary 1.4.5
+
+Get Window Title
+Documentation
+Get the current Webview window title.
+
+Get Window Url
+Documentation
+Get the current Webview window URL.
+
+Get Window Width
+Documentation
+Get current device width.
+
+Example:
+
+${width}	Get Window Width	
+${height}	Get Window Height	
+Click A Point	${width}	${height}
+New in AppiumLibrary 1.4.5
+
+Get Windows
+Documentation
+Get available Webview windows.
+
+Go Back
+Documentation
+Goes one step backward in the browser history.
+
+Go To Url
+Arguments
+url
+Documentation
+Opens URL in default web browser.
+
+Example:
+
+Open Application	http://localhost:4755/wd/hub	platformName=iOS	platformVersion=7.0	deviceName='iPhone Simulator'	browserName=Safari
+Go To URL	http://m.webapp.com				
+Hide Keyboard
+Arguments
+key_name
+=
+None
+Documentation
+Hides the software keyboard on the device. (optional) In iOS, use key_name to press a particular key, ex. Done. In Android, no parameters are used.
+
+Input Password
+Arguments
+locator
+text
+Documentation
+Types the given password into text field identified by locator.
+
+Difference between this keyword and Input Text is that this keyword does not log the given password. See introduction for details about locating elements.
+
+Input Text
+Arguments
+locator
+text
+Documentation
+Types the given text into text field identified by locator.
+
+See introduction for details about locating elements.
+
+Input Text Into Current Element
+Arguments
+text
+Documentation
+Types the given text into currently selected text field.
+
+Android only.
+
+Input Value
+Arguments
+locator
+text
+Documentation
+Sets the given value into text field identified by locator. This is an IOS only keyword, input value makes use of set_value
+
+See introduction for details about locating elements.
+
+Install App
+Arguments
+app_path
+app_package
+Documentation
+Install App via Appium
+
+Android only.
+
+app_path - path to app
+app_package - package of install app to verify
+Is Keyboard Shown
+Documentation
+Return true if Android keyboard is displayed or False if not displayed No parameters are used.
+
+Landscape
+Documentation
+Set the device orientation to LANDSCAPE
+
+Launch Application
+Documentation
+DEPRECATED!! in selenium v4, use Activate Application keyword.
+
+Launch application. Application can be launched while Appium session running. This keyword can be used to launch application during test case or between test cases.
+
+This keyword works while Open Application has a test running. This is good practice to Launch Application and Quit Application between test cases. As Suite Setup is Open Application, Test Setup can be used to Launch Application
+
+Example (syntax is just a representation, refer to RF Guide for usage of Setup/Teardown):
+
+[Setup Suite]					
+Open Application	http://localhost:4723/wd/hub	platformName=Android	deviceName=192.168.56.101:5555	app=${CURDIR}/demoapp/OrangeDemoApp.apk
+[Test Setup]					
+Launch Application				
+<<<test execution>>>			
+<<<test execution>>>			
+[Test Teardown]					
+Quit Application				
+[Suite Teardown]					
+Close Application				
+See Quit Application for quiting application but keeping Appium sesion running.
+
+Lock
+Arguments
+seconds
+=
+5
+Documentation
+Lock the device for a certain period of time. iOS only.
+
+Log Source
+Arguments
+loglevel
+=
+INFO
+Documentation
+Logs and returns the entire html source of the current page or frame.
+
+The loglevel argument defines the used log level. Valid log levels are WARN, INFO (default), DEBUG, TRACE and NONE (no logging).
+
+Long Press
+Arguments
+locator
+duration
+=
+1000
+Documentation
+DEPRECATED!! Since selenium v4, use other keywords.
+
+Long press the element with optional duration
+
+Long Press Keycode
+Arguments
+keycode
+metastate
+=
+None
+Documentation
+Sends a long press of keycode to the device.
+
+Android only.
+
+See press keycode for more details.
+
+Open Application
+Arguments
+remote_url
+alias
+=
+None
+** kwargs
+Documentation
+Opens a new application to given Appium server. Capabilities of appium server, Android and iOS, Please check https://appium.io/docs/en/2.1/cli/args/
+
+Option	Man.	Description
+remote_url	Yes	Appium server url
+alias	no	alias
+strict_ssl	No	allows you to send commands to an invalid certificate host like a self-signed one.
+Examples:
+
+Open Application	http://localhost:4723/wd/hub	alias=Myapp1	platformName=iOS	platformVersion=7.0	deviceName='iPhone Simulator'	app=your.app	
+Open Application	http://localhost:4723/wd/hub	alias=Myapp1	platformName=iOS	platformVersion=7.0	deviceName='iPhone Simulator'	app=your.app	strict_ssl=False
+Open Application	http://localhost:4723/wd/hub	platformName=Android	platformVersion=4.2.2	deviceName=192.168.56.101:5555	app=${CURDIR}/demoapp/OrangeDemoApp.apk	appPackage=com.netease.qa.orangedemo	appActivity=MainActivity
+Open Notifications
+Documentation
+Opens and expands an Android device's notification drawer.
+
+Android only.
+
+Page Should Contain Element
+Arguments
+locator
+loglevel
+=
+INFO
+Documentation
+Verifies that current page contains locator element.
+
+If this keyword fails, it automatically logs the page source using the log level specified with the optional loglevel argument. Giving NONE as level disables logging.
+
+Page Should Contain Text
+Arguments
+text
+loglevel
+=
+INFO
+Documentation
+Verifies that current page contains text.
+
+If this keyword fails, it automatically logs the page source using the log level specified with the optional loglevel argument. Giving NONE as level disables logging.
+
+Page Should Not Contain Element
+Arguments
+locator
+loglevel
+=
+INFO
+Documentation
+Verifies that current page not contains locator element.
+
+If this keyword fails, it automatically logs the page source using the log level specified with the optional loglevel argument. Giving NONE as level disables logging.
+
+Page Should Not Contain Text
+Arguments
+text
+loglevel
+=
+INFO
+Documentation
+Verifies that current page not contains text.
+
+If this keyword fails, it automatically logs the page source using the log level specified with the optional loglevel argument. Giving NONE as level disables logging.
+
+Pinch
+Arguments
+locator
+percent
+=
+200%
+steps
+=
+1
+Documentation
+DEPRECATED!! use Execute Script instead. Pinch in on an element a certain amount.
+
+Portrait
+Documentation
+Set the device orientation to PORTRAIT
+
+Press Keycode
+Arguments
+keycode
+metastate
+=
+None
+Documentation
+Sends a press of keycode to the device.
+
+Android only.
+
+Possible keycodes & meta states can be found in http://developer.android.com/reference/android/view/KeyEvent.html
+
+Meta state describe the pressed state of key modifiers such as Shift, Ctrl & Alt keys. The Meta State is an integer in which each bit set to 1 represents a pressed meta key.
+
+For example
+
+META_SHIFT_ON = 1
+META_ALT_ON = 2
+metastate=1 --> Shift is pressed
+metastate=2 --> Alt is pressed
+metastate=3 --> Shift+Alt is pressed
+_keycode- - the keycode to be sent to the device
+_metastate- - status of the meta keys
+Pull File
+Arguments
+path
+decode
+=
+False
+Documentation
+Retrieves the file at path and return it's content.
+
+Android only.
+
+path - the path to the file on the device
+decode - True/False decode the data (base64) before returning it (default=False)
+Pull Folder
+Arguments
+path
+decode
+=
+False
+Documentation
+Retrieves a folder at path. Returns the folder's contents zipped.
+
+Android only.
+
+path - the path to the folder on the device
+decode - True/False decode the data (base64) before returning it (default=False)
+Push File
+Arguments
+path
+data
+encode
+=
+False
+Documentation
+Puts the data in the file specified as path.
+
+Android only.
+
+path - the path on the device
+data - data to be written to the file
+encode - True/False encode the data as base64 before writing it to the file (default=False)
+Quit Application
+Documentation
+DEPRECATED!! in selenium v4, check Close Application keyword.
+
+Close application. Application can be quit while Appium session is kept alive. This keyword can be used to close application during test case or between test cases.
+
+See Launch Application for an explanation.
+
+Register Keyword To Run On Failure
+Arguments
+keyword
+Documentation
+Sets the keyword to execute when a AppiumLibrary keyword fails.
+
+keyword_name is the name of a keyword (from any available libraries) that will be executed if a AppiumLibrary keyword fails. It is not possible to use a keyword that requires arguments. Using the value "Nothing" will disable this feature altogether.
+
+The initial keyword to use is set in importing, and the keyword that is used by default is Capture Page Screenshot. Taking a screenshot when something failed is a very useful feature, but notice that it can slow down the execution.
+
+This keyword returns the name of the previously registered failure keyword. It can be used to restore the original value later.
+
+Example:
+
+Register Keyword To Run On Failure	Log Source	# Run Log Source on failure.	
+${previous kw}=	Register Keyword To Run On Failure	Nothing	# Disables run-on-failure functionality and stores the previous kw name in a variable.
+Register Keyword To Run On Failure	${previous kw}	# Restore to the previous keyword.	
+This run-on-failure functionality only works when running tests on Python/Jython 2.4 or newer and it does not work on IronPython at all.
+
+Remove Application
+Arguments
+application_id
+Documentation
+Removes the application that is identified with an application id
+
+Example:
+
+Remove Application	com.netease.qa.orangedemo
+Reset Application
+Documentation
+DEPRECATED!! in selenium v4, check Terminate Application keyword.
+
+Reset application. Open Application can be reset while Appium session is kept alive.
+
+Scroll
+Arguments
+start_locator
+end_locator
+Documentation
+Scrolls from one element to another Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+
+Scroll Down
+Arguments
+locator
+Documentation
+Scrolls down to element
+
+Scroll Element Into View
+Arguments
+locator
+Documentation
+Scrolls an element from given locator into view. Arguments:
+
+locator: The locator to find requested element. Key attributes for arbitrary elements are id and name. See introduction for details about locating elements.
+Examples:
+
+Scroll Element Into View	css=div.class
+Scroll Up
+Arguments
+locator
+Documentation
+Scrolls up to element
+
+Set Appium Timeout
+Arguments
+seconds
+Documentation
+Sets the timeout in seconds used by various keywords.
+
+There are several Wait ... keywords that take timeout as an argument. All of these timeout arguments are optional. The timeout used by all of them can be set globally using this keyword.
+
+The previous timeout value is returned by this keyword and can be used to set the old value back later. The default timeout is 5 seconds, but it can be altered in importing.
+
+Example:
+
+${orig timeout} =	Set Appium Timeout	15 seconds
+Open page that loads slowly		
+Set Appium Timeout	${orig timeout}	
+Set Location
+Arguments
+latitude
+longitude
+altitude
+=
+10
+Documentation
+Set location
+
+latitute
+longitude
+altitude = 10 [optional]
+Android only. New in AppiumLibrary 1.5
+
+Set Network Connection Status
+Arguments
+connectionStatus
+Documentation
+Sets the network connection Status.
+
+Android only.
+
+Possible values:
+
+Value	Alias	Data	Wifi	Airplane Mode
+0	(None)	0	0	0
+1	(Airplane Mode)	0	0	1
+2	(Wifi only)	0	1	0
+4	(Data only)	1	0	0
+6	(All network on)	1	1	0
+Set Sleep Between Wait Loop
+Arguments
+seconds
+=
+0.2
+Documentation
+Sets the sleep in seconds used by wait until loop.
+
+If you use the remote appium server, the default value is not recommended because it is another 200ms overhead to the network latency and will slow down your test execution.
+
+Shake
+Documentation
+Shake the device
+
+Start Activity
+Arguments
+appPackage
+appActivity
+** opts
+Documentation
+Opens an arbitrary activity during a test. If the activity belongs to another application, that application is started and the activity is opened.
+
+Android only.
+
+appPackage - The package containing the activity to start.
+appActivity - The activity to start.
+appWaitPackage - Begin automation after this package starts (optional).
+appWaitActivity - Begin automation after this activity starts (optional).
+intentAction - Intent to start (opt_ional).
+intentCategory - Intent category to start (optional).
+intentFlags - Flags to send to the intent (optional).
+optionalIntentArguments - Optional arguments to the intent (optional).
+dontStopAppOnReset - Should the app be stopped on reset (optional)?
+Start Screen Recording
+Arguments
+timeLimit
+=
+180s
+** options
+Documentation
+Starts an asynchronous Screen Recording for the current open application.
+
+timeLimit sets the actual time limit of the recorded video.
+
+The default value for both iOS and Android is 180 seconds (3 minutes).
+The maximum value for Android is 3 minutes.
+The maximum value for iOS is 10 minutes.
+Optional Args
+bitRate (Android Only) The video bit rate for the video, in megabits per second. 4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above.
+videoSize (Android Only) The format is widthxheight. The default value is the device's native display resolution (if supported), 1280x720 if not. For best results, use a size supported by your device's Advanced Video Coding (AVC) encoder. For example, "1280x720"
+bugReport (Android Only) Set it to true in order to display additional information on the video overlay, such as a timestamp, that is helpful in videos captured to illustrate bugs. This option is only supported since API level 27 (Android O).
+videoQuality (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium).
+videoFps (iOS Only) The Frames Per Second rate of the recorded video. Change this value if the resulting video is too slow or too fast. Defaults to 10. This can decrease the resulting file size.
+videoScale (iOS Only) The scaling value to apply. Read https://trac.ffmpeg.org/wiki/Scaling for possible values. Example value of 720p scaling is '1280:720'. This can decrease/increase the resulting file size. No scale is applied by default.
+Start Screen Recording is used hand in hand with Stop Screen Recording. See Stop Screen Recording for more details. Example:
+
+Start Screen Recording		# starts a screen record session
+.... keyword actions		
+Stop Screen Recording	filename=output	# saves the recorded session
+Stop Application
+Arguments
+app_id
+timeout
+=
+5000
+include_stderr
+=
+True
+Documentation
+Stop the given app on the device
+
+Android only. New in AppiumLibrary v2
+
+Stop Screen Recording
+Arguments
+filename
+=
+None
+** options
+Documentation
+Gathers the output from the previously started screen recording to a media file, then embeds it to the log.html(Android Only).
+
+Requires an active or exhausted Screen Recording Session. See Start Screen Recording for more details.
+
+Optional Args
+remotePath The path to the remote location, where the resulting video should be uploaded. The following protocols are supported http/https, ftp. Null or empty string value (the default setting) means the content of resulting file should be encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated media file is too big to fit into the available process memory.
+username The name of the user for the remote authentication.
+password The password for the remote authentication.
+method The http multipart upload method name. The PUT one is used by default.
+Example:
+
+Start Screen Recording		# starts a screen record session
+.... keyword actions		
+Stop Screen Recording	filename=output	# saves the recorded session
+Swipe
+Arguments
+start_x
+start_y
+offset_x
+offset_y
+duration
+=
+1000
+Documentation
+Swipe from one point to another point, for an optional duration.
+
+Args:
+
+start_x - x-coordinate at which to start
+start_y - y-coordinate at which to start
+offset_x - x-coordinate distance from start_x at which to stop
+offset_y - y-coordinate distance from start_y at which to stop
+duration - (optional) time to take the swipe, in ms.
+Usage:
+
+Swipe	500	100	100	0	1000
+NOTE: Android 'Swipe' is not working properly, use offset_x and offset_y as if these are destination points.
+
+Swipe By Percent
+Arguments
+start_x
+start_y
+end_x
+end_y
+duration
+=
+1000
+Documentation
+Swipe from one percent of the screen to another percent, for an optional duration. Normal swipe fails to scale for different screen resolutions, this can be avoided using percent.
+
+Args:
+
+start_x - x-percent at which to start
+start_y - y-percent at which to start
+end_x - x-percent distance from start_x at which to stop
+end_y - y-percent distance from start_y at which to stop
+duration - (optional) time to take the swipe, in ms.
+Usage:
+
+Swipe By Percent	90	50	10	50	# Swipes screen from right to left.
+NOTE: This also considers swipe acts different between iOS and Android.
+
+New in AppiumLibrary 1.4.5
+
+Switch Application
+Arguments
+index_or_alias
+Documentation
+Switches the active application by index or alias.
+
+index_or_alias is either application index (an integer) or alias (a string). Index is got as the return value of Open Application.
+
+This keyword returns the index of the previous active application, which can be used to switch back to that application later.
+
+Example:
+
+${appium1}=	Open Application	http://localhost:4723/wd/hub	alias=MyApp1	platformName=iOS	platformVersion=7.0	deviceName='iPhone Simulator'	app=your.app
+${appium2}=	Open Application	http://localhost:4755/wd/hub	alias=MyApp2	platformName=iOS	platformVersion=7.0	deviceName='iPhone Simulator'	app=your.app
+Click Element	sendHello	# Executed on appium running at localhost:4755					
+Switch Application	${appium1}	# Switch using index					
+Click Element	ackHello	# Executed on appium running at localhost:4723					
+Switch Application	MyApp2	# Switch using alias					
+Page Should Contain Text	ackHello Received	# Executed on appium running at localhost:4755					
+Switch To Context
+Arguments
+context_name
+Documentation
+Switch to a new context
+
+Switch To Frame
+Arguments
+frame
+Documentation
+Switches focus to the specified frame, by index, name, or webelement.
+
+Example:
+
+Go To Url	http://www.xxx.com
+Switch To Frame  | iframe_name|
+Click Element | xpath=//*[@id="online-btn"] |
+Switch To Parent Frame
+Documentation
+Switches focus to the parent context. If the current context is the top level browsing context, the context remains unchanged.
+
+Switch To Window
+Arguments
+window_name
+Documentation
+Switch to a new webview window if the application contains multiple webviews
+
+Tap
+Arguments
+locator
+x_offset
+=
+None
+y_offset
+=
+None
+count
+=
+1
+Documentation
+DEPRECATED!! Since selenium v4, use Tap With Positions keyword.
+
+Tap element identified by locator.
+
+Args:
+
+locator - (mandatory). Taps coordinates when set to ${None}.
+x_offset - (optional) x coordinate to tap, relative to the top left corner of the element.
+y_offset - (optional) y coordinate. If y is used, x must also be set, and vice versa
+count - can be used for multiple times of tap on that element
+Tap With Number Of Taps
+Arguments
+locator
+number_of_taps
+number_of_touches
+Documentation
+Sends one or more taps with one or more touch points.iOS only.
+
+Args:
+
+number_of_taps - The number of taps.
+number_of_touches - The number of touch points.
+Tap With Positions
+Arguments
+duration
+=
+500
+* locations
+Documentation
+Taps on a particular place with up to five fingers, holding for a certain time
+
+Args:
+
+locations - an array of tuples representing the x/y coordinates of the fingers to tap. Length can be up to five.
+duration - length of time to tap, in ms. Default: 500ms
+Example:
+
+@{firstFinger}	create list	${100}	${500}
+@{secondFinger}	create list |${700}	${500}	
+@{fingerPositions}	create list	${firstFinger}	${secondFinger}
+Sleep	1		
+Tap with Positions	${1000}	@{fingerPositions}	
+New in AppiumLibrary v2
+
+Terminate Application
+Arguments
+app_id
+Documentation
+Terminate the given app on the device
+
+Args:
+
+app_id - BundleId for iOS. Package name for Android.
+New in AppiumLibrary v2
+
+Text Should Be Visible
+Arguments
+text
+exact_match
+=
+False
+loglevel
+=
+INFO
+Documentation
+Verifies that element identified with text is visible.
+
+New in AppiumLibrary 1.4.5
+
+Toggle Touch Id Enrollment
+Documentation
+Toggle Touch ID enrolled state on iOS Simulator
+
+New in AppiumLibrary 1.5
+
+Touch Id
+Arguments
+match
+=
+True
+Documentation
+Simulate Touch ID on iOS Simulator
+
+match (boolean) whether the simulated fingerprint is valid (default true)
+
+New in AppiumLibrary 1.5
+
+Wait Activity
+Arguments
+activity
+timeout
+interval
+=
+1
+Documentation
+Wait for an activity: block until target activity presents or time out.
+
+Android only.
+
+activity - target activity
+timeout - max wait time, in seconds
+interval - sleep interval between retries, in seconds
+Wait Until Element Is Visible
+Arguments
+locator
+timeout
+=
+None
+error
+=
+None
+Documentation
+Waits until element specified with locator is visible.
+
+Fails if timeout expires before the element is visible. See introduction for more information about timeout and its default value.
+
+error can be used to override the default error message.
+
+See also Wait Until Page Contains, Wait Until Page Contains Element, Wait For Condition and BuiltIn keyword Wait Until Keyword Succeeds.
+
+Wait Until Page Contains
+Arguments
+text
+timeout
+=
+None
+error
+=
+None
+Documentation
+Waits until text appears on current page.
+
+Fails if timeout expires before the text appears. See introduction for more information about timeout and its default value.
+
+error can be used to override the default error message.
+
+See also Wait Until Page Does Not Contain, Wait Until Page Contains Element, Wait Until Page Does Not Contain Element and BuiltIn keyword Wait Until Keyword Succeeds.
+
+Wait Until Page Contains Element
+Arguments
+locator
+timeout
+=
+None
+error
+=
+None
+Documentation
+Waits until element specified with locator appears on current page.
+
+Fails if timeout expires before the element appears. See introduction for more information about timeout and its default value.
+
+error can be used to override the default error message.
+
+See also Wait Until Page Contains, Wait Until Page Does Not Contain Wait Until Page Does Not Contain Element and BuiltIn keyword Wait Until Keyword Succeeds.
+
+Wait Until Page Does Not Contain
+Arguments
+text
+timeout
+=
+None
+error
+=
+None
+Documentation
+Waits until text disappears from current page.
+
+Fails if timeout expires before the text disappears. See introduction for more information about timeout and its default value.
+
+error can be used to override the default error message.
+
+See also Wait Until Page Contains, Wait Until Page Contains Element, Wait Until Page Does Not Contain Element and BuiltIn keyword Wait Until Keyword Succeeds.
+
+Wait Until Page Does Not Contain Element
+Arguments
+locator
+timeout
+=
+None
+error
+=
+None
+Documentation
+Waits until element specified with locator disappears from current page.
+
+Fails if timeout expires before the element disappears. See introduction for more information about timeout and its default value.
+
+error can be used to override the default error message.
+
+See also Wait Until Page Contains, Wait Until Page Does Not Contain, Wait Until Page Contains Element and BuiltIn keyword Wait Until Keyword Succeeds.
+
+Xpath Should Match X Times
+Arguments
+xpath
+count
+error
+=
+None
+loglevel
+=
+INFO
+Documentation
+Verifies that the page contains the given number of elements located by the given xpath.
+
+One should not use the xpath= prefix for 'xpath'. XPath is assumed.
+
+Correct:		
+Xpath Should Match X Times	//android.view.View[@text='Test']	1
+Incorrect:		
+Xpath Should Match X Times	xpath=//android.view.View[@text='Test']	1
+error can be used to override the default error message.
+
+See Log Source for explanation about loglevel argument.
+
+New in AppiumLibrary 1.4.
+
+Zoom
+Arguments
+locator
+percent
+=
+200%
+steps
+=
+1
+Documentation
+DEPRECATED!! Zooms in on an element a certain amount.

@@ -1,0 +1,22 @@
+
+# Robot Framework-projekt (.gitignore)
+# =====================
+
+# Ignorera alla VSCode temporära filer
+interactive_console_output.txt
+
+# Ignorera gamla loggar
+log.html
+output.xml
+report.html
+
+# Ignorera hela Results-mappen (där nya resultat hamnar)
+Results/
+
+# Ignorera Python cache-filer
+__pycache__/
+*.pyc
+
+# Ignorera andra temporära filer
+*.tmp
+*.log
