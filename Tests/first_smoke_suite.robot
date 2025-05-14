@@ -97,12 +97,3 @@ Suite Teardown    Terminate Application    barkfors.fleet.t5app
     Open new order from dropdown notifications
     Wait Until Page Contains    Orders 
     #because dashboard should be visible again if no crash
-
-
-# TORRKÖR TESTER - element existerar, stegen är korrekta, korrekt syntax osv
-# robot --dryrun C:\Users\IsabeldosSantosPette\FirstRobot\Tests\first_smoke_suite.robot 
-# robot --dryrun --test "NAMN PÅ TEST" C:\Users\IsabeldosSantosPette\FirstRobot\Tests\first_smoke_suite.robot
-
-
-#TANKAR= rensa bland ordrar med något avslutande test?
-# NEGATIVA TESTER, RETRY LOGIC
