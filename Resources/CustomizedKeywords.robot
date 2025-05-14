@@ -4,12 +4,12 @@ Library    AppiumLibrary
 Library    DateTime
 
 *** Variables ***
-${company_key}  35336194
-${expected_version}    Your version: 14.2.1
-${test_email}    isabel.dossantos.pettersson.ext@bf.se 
-${test_password}    Isabel
+${company_key}  
+${expected_version}    
+${test_email}     
+${test_password}    
 ${wrong_password}    XXX
-${resource}    T5Test
+${resource}    
 ${test_description}    This is a testing description
 ${name}    Mr. Test
 ${test_address}    Test Address 20
@@ -19,14 +19,14 @@ ${test_country}    Sverige
 ${unloading_description}    This is an unloading description
 ${test_activity_title}    Testing Title
 ${emulator}    emulator-5554 
-${T5App}    C:/Users/IsabeldosSantosPette/Downloads/app-release.apk 
+${T5App}     
 ${platform}    Android
 
 *** Keywords ***
 Open App
     [Documentation]      Opens the Android app on the emulator using Appium Server.
     ...                  Automatically grants permissions, disables keystore, mocks the camera and resets the storage/chache.
-    ...                  App path: app-release.apk, automation engine: UiAutomator2.   
+    ...                  App path, automation engine: UiAutomator2.   
     Open Application    http://127.0.0.1:4723
     ...    platformName=${platform}
     ...    appium:automationName=UiAutomator2
