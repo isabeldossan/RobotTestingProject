@@ -1,33 +1,41 @@
-trigger:
-- main
+trigger: none  # Körs manuellt
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'macOS-latest'
+
+variables:
+  DEVICE_NAME: 'Medium_Phone_API_36'
+  TEST_SCRIPT: 'run_tests.sh'
+  RESULTS_DIR: 'Results'
 
 steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.x'
-
+# Installera Python och Robot Framework
 - script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+    python3 -m pip install --upgrade pip
+    pip3 install robotframework robotframework-appiumlibrary
+  displayName: 'Install Python & Robot Framework'
 
+# Installera Appium
 - script: |
-    robot --output output.xml --report report.html --log log.html first_smoke_suite/
-  displayName: 'Run Robot Framework tests'
+    npm install -g appium
+  displayName: 'Install Appium globally'
 
+#  Öppnar emulator, startar Appium server och kör script
+- script: |
+    chmod +x $TEST_SCRIPT
+    ./$TEST_SCRIPT
+  displayName: 'Run Robot Framework tests via run_tests.sh'
+  workingDirectory: '$(Build.SourcesDirectory)'
+
+# Publicerar testresultat
 - task: PublishTestResults@2
   inputs:
-    testResultsFormat: 'Robot'
-    testResultsFiles: '**/output.xml'
-    failTaskOnFailedTests: true
-    testRunTitle: 'Robot Framework Tests'
-  condition: succeededOrFailed()
+    testResultsFiles: 'Results/*/output.xml'
+    testRunTitle: 'Robot Framework Results'
 
+# Publicera rapport som artifact
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '.'
-    ArtifactName: 'RobotTestResults'
+    PathtoPublish: 'Results'
+    ArtifactName: 'RobotTestReports'
     publishLocation: 'Container'

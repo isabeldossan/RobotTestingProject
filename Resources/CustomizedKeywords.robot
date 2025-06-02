@@ -4,12 +4,12 @@ Library    AppiumLibrary
 Library    DateTime
 
 *** Variables ***
-${company_key}  
-${expected_version}    
-${test_email}     
-${test_password}    
+${company_key}    35336194  
+${expected_version}    Your version: 14.2.1   
+${test_email}     isabel.dossantos.pettersson.ext@bf.se
+${test_password}    Isabel
 ${wrong_password}    XXX
-${resource}    
+${resource}    T5Test    
 ${test_description}    This is a testing description
 ${name}    Mr. Test
 ${test_address}    Test Address 20
@@ -19,7 +19,7 @@ ${test_country}    Sverige
 ${unloading_description}    This is an unloading description
 ${test_activity_title}    Testing Title
 ${emulator}    emulator-5554 
-${T5App}     
+${T5App}    app-release.apk             
 ${platform}    Android
 
 *** Keywords ***
@@ -37,6 +37,7 @@ Open App
     ...    appium:useKeystore=${False}
     ...    appium:camera=mock
     ...    noReset=${False}
+    ...    ignoreHiddenApiPolicyError=${True}
 
 Check App Health
     [Documentation]    Will check if the app is still running, if crashed will log an Error message for information
@@ -48,6 +49,11 @@ Prepare Check
     ...                Also checks in logged in or not, if not logged in login-keyword will run
     Check App Health
     Check if logged in
+
+Init App If Needed
+    ${app_should_start}=    Run Keyword And Return Status    Check App Health
+    Run Keyword If    not ${app_should_start}    Log To Console    🔄 App startas eftersom den inte är igång
+    Run Keyword If    not ${app_should_start}    Open App    
 
 Company key input
     [Documentation]    Input of the mandatory company key
@@ -343,7 +349,7 @@ Copy an order
 
 Find and open order with attached pdf    
     [Documentation]    Find and open a new order from the order dashboard, only open order if it includes attached pdf
-    Click Element    android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("107255, Direkttransport, 1-PeterFöretag"))
+    Click Element    android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("106771, Direkttransport, Barkfors Internkund"))
     Wait Until Page Contains    Order
     Click Element    id=barkfors.fleet.t5app:id/imageview_orderfil 
     Click Text    Open file    
@@ -385,6 +391,11 @@ Login
     Choose resource
 
 Check if logged in   
-    [Documentation]    Will confirm if logged in and if not will run the login keyword 
-    ${is_logged_in}=    Run Keyword And Return Status    Page Should Contain Element    id=barkfors.fleet.t5app:id/textview_lbl_resurs
+    [Documentation]    Will confirm if logged in and if not will run the login keyword
+    ${text}=    Get Text    id=barkfors.fleet.t5app:id/textview_lbl_resurs
+    ${is_logged_in}=    Run Keyword And Return Status   Should Match Regexp    ${text}    (?i).*(${expected_version}|${resource}).*  
     Run Keyword Unless    ${is_logged_in}    Login    
+
+    ${text}=          Get Text    id=barkfors.fleet.t5app:id/textview_lbl_resurs
+    ${is_match}=      Run Keyword And Return Status    Should Match Regexp    ${text}    .*(${expected_version}|${resource}).*
+    Run Keyword Unless    ${is_match}    Fail    Ingen matchning mot version eller resurs!

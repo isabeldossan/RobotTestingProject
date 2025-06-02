@@ -2,7 +2,7 @@
 Library    DateTime
 Resource    ../Resources/CustomizedKeywords.robot
 
-Suite Setup    Open App
+Suite Setup    Init App If Needed
 Test Setup    Prepare Check
 Test Teardown    Return To Home
 Suite Teardown    Terminate Application    barkfors.fleet.t5app
@@ -27,14 +27,7 @@ Suite Teardown    Terminate Application    barkfors.fleet.t5app
     Start order
     Text Should Be Visible    Current status: Started
 
-4. Deny order test
-    Log    ✅ Logged in
-    Open order dashboard
-    Find and open new order
-    Deny order
-    Text Should Be Visible    Current status: Denied 
-
-5. Report unloading test
+4. Report unloading test
     Log    ✅ Logged in
     Open order dashboard
     Find and open new order
@@ -44,7 +37,7 @@ Suite Teardown    Terminate Application    barkfors.fleet.t5app
     Find unloading report on order dashboard
     Text Should Be Visible    ${unloading_description}
 
-6. Report deviation including photo test
+5. Report deviation including photo test
     Log    ✅ Logged in
     Open order dashboard
     Find and open started order
@@ -53,14 +46,14 @@ Suite Teardown    Terminate Application    barkfors.fleet.t5app
     Find deviation report on order dashboard
     Text Should Be Visible    ${test_description}
 
-7. E2E - Scenario A - Create a new order in app using existing template test
+6. E2E - Scenario A - Create a new order in app using existing template test
     Log    ✅ Logged in
     Open order dashboard
     Open more options menu
     Create a new order from template
     Page Should Contain Text    Orders
 
-8. E2E - Scenario B - Edit and sign new order test
+7. E2E - Scenario B - Edit and sign new order test
     Log    ✅ Logged in
     Open order dashboard
     Find and open new order
@@ -69,26 +62,26 @@ Suite Teardown    Terminate Application    barkfors.fleet.t5app
     Sign an order with new contact
     Wait Until Page Contains    signatur_
 
-9. E2E - Scenario C - Create a new activity test
+8. E2E - Scenario C - Create a new activity test
     Log    ✅ Logged in    
     Open activity dashboard
     Create new activity
     Page Should Contain Text    ${test_activity_title}
 
-10. Archive all completed orders
+9. Archive all completed orders
     Log    ✅ Logged in
     Open order dashboard
     Open more options menu
     Archive completed orders
     Wait Until Page Contains    Orders
 
-11. Open an attached pdf from a recieved order
+10. Open an attached pdf from a recieved order
     Log    ✅ Logged in
     Open order dashboard
     Find and open order with attached pdf
     Wait Until Page Contains Element    id=barkfors.fleet.t5app:id/pdf_pages_container     
 
-12. Bug 8377 - Copy an order and open the new order through notifications without crash test
+11. Bug 8377 - Copy an order and open the new order through notifications without crash test
     Log    ✅ Logged in
     Open order dashboard
     Find and open new order

@@ -11,7 +11,7 @@ mkdir Results\
 echo ==== Startar emulatorn... ====
 start "" "C:\Users\IsabeldosSantosPette\AppData\Local\Android\Sdk\emulator\emulator.exe" -avd Medium_Phone_API_36
 
-timeout /t 10
+timeout /t 15
 
 echo ==== Startar Appium server... ====
 start cmd /k appium
@@ -19,8 +19,8 @@ start cmd /k appium
 timeout /t 10
 
 echo ==== Kör Robot testerna... ====
-REM robot --outputdir Results\%DATUM% --output output.xml Tests\first_smoke_suite.robot
-robot --outputdir Results\%DATUM% --output output.xml --test "4. Deny order test" Tests\first_smoke_suite.robot
+robot --outputdir Results\%DATUM% --output output.xml Tests\first_smoke_suite.robot
+REM robot --outputdir Results\%DATUM% --output output.xml --test "4. Deny order test" Tests\first_smoke_suite.robot
 
 echo ==== Kör om failade tester om några... ====
 robot --outputdir Results\%DATUM%\rerun --output rerun.xml --log rerun_log.html --report rerun_report.html --rerunfailed Results\%DATUM%\output.xml Tests\first_smoke_suite.robot
@@ -32,8 +32,12 @@ IF EXIST Results\%DATUM%\rerun\rerun.xml (
     rebot --outputdir Results\%DATUM% --output final_output.xml --log final_log.html --report final_report.html Results\%DATUM%\output.xml
 )
 
-REM === Öppnar slutrapporten ====
-start Results\%DATUM%\final_report.html
+REM === Öppnar slutrapporten ===
+IF EXIST Results\%DATUM%\final_report.html (
+    start "" "%cd%\Results\%DATUM%\final_report.html"
+) ELSE (
+    echo [WARNING] Slutrapporten kunde inte öppnas – filen saknas.
+)
 
 REM === Stänger emulatorn och Appium servern ===
 adb -s emulator-5554 emu kill
