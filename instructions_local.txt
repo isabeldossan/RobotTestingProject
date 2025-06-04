@@ -1,0 +1,43 @@
+🔍 Running Tests Locally
+To run the test suite locally, you need to follow these steps:
+
+✅ Prerequisites
+Make sure you have the following installed on your machine:
+
+Python 3.7+  - install via web, make sure to set PATH when installing
+pip package  - install via web  
+*Robot Framework  - install via command:  pip install robotframework
+Selenium  - install via command:  pip install selenium
+AppiumLibrary  - install via command:  pip install robotframework-AppiumLibrary
+Node.js  - install via web 
+Appium Server  - install via command:  npm install Appium
+Appium Python Client  - install via command: pip install Appium-Python-Client
+Android Emulator  - setup via Android Studio > More Actions > Virtual Device Manager > Choose one or more devices in the list
+IDE (if editing in the files) like VS Code or Visual Studio
+
+Check if everything was sucessful via (new) command-window:  pip list
+Also possible to check if installations was sucessful via command:  python --version / robot --version , etc
+Check if/which emulator exists via command:  emulator -list-avds
+All dependencies listed in Requirements.txt.
+
+▶️ Run the Suite locally
+
+If running locally make sure that the CustomizedKeywords points to the right .apk file (in variables) and that the path to the emulator in the .bat file 
+is the right path to where your emulator/sdk is. You can change variables/testdata to other email, password etc. 
+
+Double-tap the .bat file from your local RobotTestingProject-folder. The .bat script shall now follow the steps which is also visible in the log that is being opened. 
+
+▶️ Run the tests separately directly from your IDE
+
+You must start the emulator and Appium Server manually first, 
+use these commands: 
+
+appium 
+
+Open a new command prompt window and write: 
+
+emulator -avd Medium_Phone_API_36 (or whichever emulator you have on your machine)
+
+Dont close these two command windows after emulator and appium server is started. 
+
+Now you can directly from your IDE click on the Start test-icon, or start the whole suite to run the tests. 
