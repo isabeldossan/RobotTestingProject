@@ -6,8 +6,8 @@ Library    DateTime
 *** Variables ***
 ${company_key}    35336194  
 ${expected_version}    Your version: 14.2.1   
-${test_email}     isabel.dossantos.pettersson.ext@bf.se
-${test_password}    Isabel
+${test_email}     XXX
+${test_password}    XXX
 ${wrong_password}    XXX
 ${resource}    T5Test    
 ${test_description}    This is a testing description
